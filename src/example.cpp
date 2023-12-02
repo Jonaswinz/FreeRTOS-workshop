@@ -18,6 +18,9 @@ struct WorkloadParams{
 SemaphoreHandle_t mutex;
 TickType_t xLastWakeTime;
 
+TaskHandle_t taskHandle;
+
+
 //Function to safely write to the serial console
 void vSafePrint(const char *out) {
 
@@ -100,7 +103,9 @@ int main()
 
     //Create workload task and pasing WorkloadParams
     WorkloadParams params2 = {1, 200};
-    xTaskCreate(workload_task, "Workload_Task", 256, &params2, 1, NULL);
+    xTaskCreate(workload_task, "Workload_Task", 256, &params2, 1, &taskHandle);
+
+    vTaskCoreAffinitySet(taskHandle, 0b00000011);
 
     //Starts the scheduler
     vTaskStartScheduler();
